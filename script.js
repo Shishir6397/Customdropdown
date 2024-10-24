@@ -34,14 +34,43 @@ let countries = [
     container.classList.toggle('active');
   })
 
-  function addCountry(){
+  function addCountry(selectedCountry){
     lists.innerHTML="";
     countries.forEach((country)=>{
-        let listItem = '<li>' + country + '</li>';
+        let isSelected = selectedCountry ==country?"selected":"";
+        let listItem = '<li class = " '+ isSelected + '">' + country +  '</li>';
         lists.insertAdjacentHTML('beforeend',listItem);
     })
+    addClickEvenToLi();
   }
 
   addCountry();
 
-  
+  function addClickEvenToLi(){
+    lists.querySelectorAll('li').forEach(listItem=>{
+        listItem.addEventListener('click',()=>{
+            updateSelectCountry(listItem);
+        })
+      })
+
+  }
+
+
+  function updateSelectCountry(listItem){
+    searchInput.value = "";
+    selectBtn.firstElementChild.innerHTML = listItem.innerHTML;
+    container.classList.remove('active');
+    addCountry(listItem.innerHTML);
+  }
+
+  searchInput.addEventListener('keyup',()=>{
+    let searchInpVal = searchInput.value.toLowerCase();
+    let filterCountries = countries.filter(country=>{
+        return country.toLocaleLowerCase().startsWith(searchInpVal);
+    }).map(country=>{
+        let listItem = '<li>' + country + '</li';
+        return listItem;
+    }).join("");
+    lists.innerHTML = filterCountries;
+    addClickEvenToLi();
+  })
